@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const DishesController = require("../controller/dishes");
+const DishesController = require("../controller/dishesController");
 
 
 router.get("/all-dishes", DishesController.getAllDishes);

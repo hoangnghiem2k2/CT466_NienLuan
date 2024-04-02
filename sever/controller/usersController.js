@@ -1,5 +1,64 @@
 const userModel = require("../models/users");
-//onst bcrypt = require("bcryptjs");
+const userService = require("../services/usersService")
+const bcrypt = require("bcrypt");
+const createUser = async (req,res)=>{
+  try{
+    const {  userName, password,confirmpassword, phone,email } = req.body;
+    if (
+      !userName ||
+      !password ||
+      !confirmpassword||
+      !email ||
+      !phone
+    ) {
+      return res.status(200).json({ message: "All filled must be required" });
+    } else if (confirmpassword != password){
+      return res.status(200).json({ message: "The confirm password didn't match with the password" });
+    }
+    const response = await  userService.createUser(req.body);
+    return res.status(200).json(response)
+  } catch(e) {
+    return res.status(404).json({
+      message: e
+    })
+  }
+}
+
+const loginUser = async (req,res)=>{
+  try{
+    const {   password, email } = req.body;
+    if (
+      !password ||
+      !email
+    ) {
+      return res.status(200).json({ message: "All filled must be required" });
+    } 
+    const response = await  userService.createUser(req.body);
+    return res.status(200).json(response)
+  } catch(e) {
+    return res.status(404).json({
+      message: e
+    })
+  }
+}
+
+const updateUser = async (req,res)=>{
+  try{
+    const {   password, email } = req.body;
+    if (
+      !password ||
+      !email
+    ) {
+      return res.status(200).json({ message: "All filled must be required" });
+    } 
+    const response = await  userService.createUser(req.body);
+    return res.status(200).json(response)
+  } catch(e) {
+    return res.status(404).json({
+      message: e
+    })
+  }
+}
 
 class User {
     async getAllUser(req, res) {
@@ -34,32 +93,6 @@ class User {
         }
       }
     
-      async postAddUser(req, res) {
-        let {  userName, password, phone,email } = req.body;
-        if (
-          !userName ||
-          !password ||
-          !email ||
-          !phone
-        ) {
-          return res.json({ message: "All filled must be required" });
-        } else {
-          try {
-            let newUser = new userModel({
-                userName ,
-                password ,
-                email ,
-                phone
-            });
-            let save = await newUser.save();
-            if (save) {
-              return res.json({ success: "User created successfully" });
-            }
-          } catch (err) {
-            return res.json({ error: error });
-          }
-        }
-      }
     
       async postEditUser(req, res) {
         let { uId, email, phoneNumber } = req.body;
@@ -126,4 +159,9 @@ class User {
 }
 
 const UsersController = new User();
-module.exports = UsersController;
+module.exports = {
+  createUser,
+  loginUser,
+  updateUser
+ // UsersController
+}

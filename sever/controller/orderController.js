@@ -24,7 +24,6 @@ class Order {
       try {
         let Order = await orderModel
           .find({ user: uId })
-          .populate("allDishes.id", "Name Images Price")
           .populate( "name email")
           .sort({ _id: -1 });
         if (Order) {

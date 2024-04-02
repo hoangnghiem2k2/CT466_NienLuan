@@ -1,27 +1,13 @@
-const express = require("express");
-const app = express();
-const cors = require("cors");
 
+const config = require("./config/db")
 
-const authRouter = require("./routes/auth");
-const categoryRouter = require("./routes/categories");
-const productRouter = require("./routes/dishes");
-const orderRouter = require("./routes/order");
-const usersRouter = require("./routes/users");
-const config = require("./config/db");
-const MongoDB = require("./utils/mongodb_utils");
+const { default: mongoose } = require("mongoose");
+const app = require("./app")
 
-
-app.use(cors());
-app.use("/api", authRouter);
-app.use("/api/user", usersRouter);
-app.use("/api/category", categoryRouter);
-app.use("/api/product", productRouter);
-app.use("/api/order", orderRouter);
 
 async function startServer() {
   try {
-      await MongoDB.connect(config.db.uri);
+      await mongoose.connect(config.db.uri);
       console.log("Connected to the database!");
 
       const PORT = config.app.port;

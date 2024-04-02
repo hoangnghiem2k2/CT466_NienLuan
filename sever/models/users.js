@@ -1,8 +1,7 @@
-const mongoose = require("mongoose");
-
+const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema(
     {
-        userName: {
+        name: {
             type: String,
             required: true,
             maxlength: 32,
@@ -10,36 +9,36 @@ const userSchema = new mongoose.Schema(
         email: {
             type: String,
             required: true,
-            trim: true,
-            index: { unique: true },
+            unique: true,
             match: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
         },
         password: {
             type: String,
             required: true,
+        
         },
-        userRole: {
-            type: Number,
-            required: true,
-        },
-        phoneNumber: {
-            type: Number,
-        },
-        userImage: {
-            type: String,
-            default: "user.png",
-        },
-        verified: {
-            type: String,
+        isAdmin: {
+            type: Boolean,
             default: false,
         },
-        history: {
-            type: Array,
-            default: [],
+        phone: {
+            type: Number,
         },
+        access_token: {
+            type: String,
+            require: true,
+        },
+        refresh_token: {
+            type: String,
+            require: true,
+        },
+      
+        
+
     },
     { timestamps: true }
+    
 );
 
-const userModel = mongoose.model("users", userSchema);
-module.exports = userModel;
+const User = mongoose.model("User", userSchema);
+module.exports = User;

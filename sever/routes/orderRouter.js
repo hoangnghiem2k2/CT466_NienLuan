@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const ordersController = require("../controller/order");
+const ordersController = require("../controller/orderController");
 
 router.get("/get-all-orders", ordersController.getAllOrders);
 router.post("/order-by-user", ordersController.getOrderByUser);
