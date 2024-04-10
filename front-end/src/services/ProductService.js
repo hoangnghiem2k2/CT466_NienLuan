@@ -18,8 +18,12 @@ export const getProductType = async (type, page, limit) => {
     }
 }
 
-export const createProduct = async (data) => {
-    const res = await axios.post(`${process.env.REACT_APP_API_URL}/dishes/create`, data)
+export const createProduct = async ( access_token,data) => {
+    const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/dishes/create`, data, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        }
+    })
     return res.data
 }
 

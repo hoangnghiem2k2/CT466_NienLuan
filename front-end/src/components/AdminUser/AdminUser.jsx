@@ -388,7 +388,7 @@ const AdminUser = () => {
             <Form.Item
               label="Avatar"
               name="avatar"
-              rules={[{ required: true, message: 'Please input your image!' }]}
+              rules={[{  message: 'Please input your image!' }]}
             >
               <WrapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
                 <Button >Select File</Button>

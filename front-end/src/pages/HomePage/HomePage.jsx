@@ -62,12 +62,12 @@ const HomePage = () => {
               return (
                 <CardComponent
                   key={product._id}
-                  description={product.Description}
-                  image={product.Image}
-                  name={product.Name}
-                  price={product.Price}
-                  rating={product.Rating}
-                  type={product.Category}
+                  description={product.description}
+                  image={product.image}
+                  name={product.name}
+                  price={product.price}
+                  rating={product.rating}
+                  type={product.type}
                   id={product._id}
                 />
               )

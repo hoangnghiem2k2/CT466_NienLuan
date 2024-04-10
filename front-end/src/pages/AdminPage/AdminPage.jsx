@@ -21,7 +21,7 @@ const AdminPage = () => {
 
   const items = [
     getItem('Người dùng', 'users', <UserOutlined />),
-    getItem('Món ăn', 'products', <AppstoreOutlined />),
+    getItem('Món ăn', 'Dishes', <AppstoreOutlined />),
     getItem('Đơn hàng', 'orders', <ShoppingCartOutlined />),
     
   ];
@@ -46,9 +46,9 @@ const AdminPage = () => {
 
   const queries = useQueries({
     queries: [
-      {queryKey: ['products'], queryFn: getAllProducts, staleTime: 1000 * 60},
-      {queryKey: ['users'], queryFn: getAllUsers, staleTime: 1000 * 60},
-      {queryKey: ['orders'], queryFn: getAllOrder, staleTime: 1000 * 60},
+      {queryKey: ['products'], queryFn: getAllProducts, staleTime: 1000 * 10},
+      {queryKey: ['users'], queryFn: getAllUsers, staleTime: 1000 * 10},
+      {queryKey: ['orders'], queryFn: getAllOrder, staleTime: 1000 * 10},
     ]
   })
   const memoCount = useMemo(() => {

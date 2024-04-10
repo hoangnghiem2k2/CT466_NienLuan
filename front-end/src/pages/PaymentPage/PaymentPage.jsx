@@ -33,7 +33,6 @@ const PaymentPage = () => {
     name: '',
     phone: '',
     address: '',
-    city: ''
   })
   const [form] = Form.useForm();
 

@@ -83,7 +83,7 @@ const OrderPage = () => {
   useEffect(() => {
     if(isOpenModalUpdateInfo) {
       setStateUserDetails({
-        city: user?.city,
+        city: user?.address,
         name: user?.name,
         address: user?.address,
         phone: user?.phone
@@ -136,7 +136,7 @@ const OrderPage = () => {
   const handleAddCard = () => {
     if(!order?.orderItemsSlected?.length) {
       message.error('Vui lòng chọn sản phẩm')
-    }else if(!user?.phone || !user.address || !user.name || !user.city) {
+    }else if(!user?.phone || !user.address || !user.name ) {
       setIsOpenModalUpdateInfo(true)
     }else {
       navigate('/payment')
@@ -169,7 +169,7 @@ const OrderPage = () => {
   }
   const handleUpdateInforUser = () => {
     const {name, address,city, phone} = stateUserDetails
-    if(name && address && city && phone){
+    if(name && address  && phone){
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
         onSuccess: () => {
           dispatch(updateUser({name, address,city, phone}))
@@ -263,7 +263,7 @@ const OrderPage = () => {
               <WrapperInfo>
                 <div>
                   <span>Địa chỉ: </span>
-                  <span style={{fontWeight: 'bold'}}>{ `${user?.address} ${user?.city}`} </span>
+                  <span style={{fontWeight: 'bold'}}>{ `${user?.address} `} </span>
                   <span onClick={handleChangeAddress} style={{color: '#9255FD', cursor:'pointer'}}>Thay đổi</span>
                 </div>
               </WrapperInfo>
