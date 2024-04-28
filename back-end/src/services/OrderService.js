@@ -1,29 +1,79 @@
 const Order = require("../model/OrderModel")
-const Dish = require("../model/DishModel")
+const Dishes = require("../model/DishModel")
 const EmailService = require("../services/EmailService")
 
-async function createOrder(orderData) {
-    try {
-      // Validate order data (optional)
-      // You can add validation logic here to ensure required fields are present and have valid formats
+const createOrder = (newOrder) => {
+    return new Promise(async (resolve, reject) => {
+        const { orderItems,paymentMethod, itemsPrice, shippingPrice, totalPrice, fullName, address, city, phone,user, isPaid, paidAt,email } = newOrder
+        try {
+            const promises = orderItems.map(async (order) => {
+                const productData = await Dishes.findOneAndUpdate(
+                    {
+                    _id: order.product,
+                    countInStock: {$gte: order.amount}
+                    },
+                    {$inc: {
+                        countInStock: -order.amount,
+                        selled: +order.amount
+                    }},
+                    {new: true}
+                )
+                if(productData) {
+                    return {
+                        status: 'OK',
+                        message: 'SUCCESS'
+                    }
+                }
+                 else {
+                    return{
+                        status: 'OK',
+                        message: 'ERR',
+                        id: order.product
+                    }
+                }
+            })
+            console.log(newOrder)
+            const results = await Promise.all(promises)
+            const newData = results && results.filter((item) => item.id)
+            if(newData.length) {
+                const arrId = []
+                newData.forEach((item) => {
+                    arrId.push(item.id)
+                })
+                resolve({
+                    status: 'ERR',
+                    message: `San pham voi id: ${arrId.join(',')} khong du hang`
+                })
+            } else {
+                const createdOrder = await Order.create({
+                    orderItems,
+                    shippingAddress: {
+                        fullName,
+                        address,
+                        city, phone
+                    },
+                    itemsPrice,
+                    paymentMethod,
+                    shippingPrice,
+                    totalPrice,
+                    user: user,
+                    isPaid, paidAt
+                })
+                if (createdOrder) {
+                    //await EmailService.sendEmailCreateOrder(email,orderItems)
+                    resolve({
+                        status: 'OK',
+                        message: 'success'
+                    })
+                }
+            }
+        } catch (e) {
+           console.log('e', e)
+            reject(e)
+        }
+    })
+}
   
-      // Calculate total price (assuming prices are already set in orderItems)
-      const totalPrice = orderData.orderItems.reduce((acc, item) => acc + (item.price * item.amount), 0);
-  
-      // Create a new order with calculated total and provided data
-      const newOrder = new Order({
-        ...orderData, // Spread operator to include all properties from orderData
-        total: totalPrice,
-      });
-  
-      const savedOrder = await newOrder.save();
-  
-      return savedOrder;
-    } catch (error) {
-      console.error('Error creating order:', error.message);
-      throw error; // Re-throw the error for caller to handle
-    }
-  }
 
 
 
@@ -82,20 +132,18 @@ const cancelOrderDetails = (id, data) => {
         try {
             let order = []
             const promises = data.map(async (order) => {
-                const productData = await Product.findOneAndUpdate(
+                const productData = await Dishes.findOneAndUpdate(
                     {
-                        _id: order.product,
-                        selled: { $gte: order.amount }
+                    _id: order.product,
+                    selled: {$gte: order.amount}
                     },
-                    {
-                        $inc: {
-                            countInStock: +order.amount,
-                            selled: -order.amount
-                        }
-                    },
-                    { new: true }
+                    {$inc: {
+                        countInStock: +order.amount,
+                        selled: -order.amount
+                    }},
+                    {new: true}
                 )
-                if (productData) {
+                if(productData) {
                     order = await Order.findByIdAndDelete(id)
                     if (order === null) {
                         resolve({
@@ -104,7 +152,7 @@ const cancelOrderDetails = (id, data) => {
                         })
                     }
                 } else {
-                    return {
+                    return{
                         status: 'OK',
                         message: 'ERR',
                         id: order.product
@@ -113,8 +161,8 @@ const cancelOrderDetails = (id, data) => {
             })
             const results = await Promise.all(promises)
             const newData = results && results[0] && results[0].id
-
-            if (newData) {
+            
+            if(newData) {
                 resolve({
                     status: 'ERR',
                     message: `San pham voi id: ${newData} khong ton tai`
@@ -146,10 +194,43 @@ const getAllOrder = () => {
     })
 }
 
+
+
+const updateOrderStatus = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const order = await Order.findByIdAndUpdate(id, {
+                isPaid: true,
+                isDelivered: true
+            });
+            if (!order) {
+                resolve({
+                    status: 'ERR',
+                    message: 'The order is not defined'
+                });
+                return; // Add a return statement to exit the function
+            }
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: order
+            });
+        } catch (e) {
+            console.error('Error updating order status:', e);
+            reject(e);
+        }
+    });
+};
+
+
+
+
+
+
 module.exports = {
     createOrder,
     getAllOrderDetails,
     getOrderDetails,
     cancelOrderDetails,
-    getAllOrder
+    getAllOrder,updateOrderStatus
 }

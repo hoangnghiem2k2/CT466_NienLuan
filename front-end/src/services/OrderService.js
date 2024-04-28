@@ -46,3 +46,12 @@ export const getAllOrder = async (access_token) => {
   })
   return res.data
 }
+
+export const UpdateOrder = async (id, access_token) => {
+  const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/order/update/${id}`, {
+      headers: {
+          token: `Bearer ${access_token}`,
+      }
+  })
+  return res.data
+}

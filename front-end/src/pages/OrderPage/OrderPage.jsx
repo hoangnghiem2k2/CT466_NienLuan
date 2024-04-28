@@ -29,7 +29,6 @@ const OrderPage = () => {
     name: '',
     phone: '',
     address: '',
-    city: ''
   })
   const navigate = useNavigate()
   const [form] = Form.useForm();
@@ -83,7 +82,6 @@ const OrderPage = () => {
   useEffect(() => {
     if(isOpenModalUpdateInfo) {
       setStateUserDetails({
-        city: user?.address,
         name: user?.name,
         address: user?.address,
         phone: user?.phone
@@ -168,11 +166,11 @@ const OrderPage = () => {
     setIsOpenModalUpdateInfo(false)
   }
   const handleUpdateInforUser = () => {
-    const {name, address,city, phone} = stateUserDetails
+    const {name, address, phone} = stateUserDetails
     if(name && address  && phone){
       mutationUpdate.mutate({ id: user?.id, token: user?.access_token, ...stateUserDetails }, {
         onSuccess: () => {
-          dispatch(updateUser({name, address,city, phone}))
+          dispatch(updateUser({name, address, phone}))
           setIsOpenModalUpdateInfo(false)
         }
       })
@@ -322,13 +320,7 @@ const OrderPage = () => {
             >
               <InputComponent value={stateUserDetails['name']} onChange={handleOnchangeDetails} name="name" />
             </Form.Item>
-            <Form.Item
-              label="City"
-              name="city"
-              rules={[{ required: true, message: 'Please input your city!' }]}
-            >
-              <InputComponent value={stateUserDetails['city']} onChange={handleOnchangeDetails} name="city" />
-            </Form.Item>
+           
             <Form.Item
               label="Phone"
               name="phone"

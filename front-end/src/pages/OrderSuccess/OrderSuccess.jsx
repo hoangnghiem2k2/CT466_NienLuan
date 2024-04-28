@@ -30,7 +30,7 @@ const OrderSucess = () => {
                   <Lable>Phương thức thanh toán</Lable>
                 
                   <WrapperValue>
-                    {orderContant.payment[state?.payment]}
+                    Thanh toán khi nhận hàng
                   </WrapperValue>
                 </div>
               </WrapperInfo>

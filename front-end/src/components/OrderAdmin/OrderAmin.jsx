@@ -9,7 +9,7 @@ import ModalComponent from '../ModalComponent/ModalComponent'
 import { convertPrice, getBase64 } from '../../utils'
 import { useEffect } from 'react'
 import * as message from '../Message/Message'
-
+import { UpdateOrder } from '../../services/OrderService';
 import * as OrderService from '../../services/OrderService'
 import { useQuery } from '@tanstack/react-query'
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
@@ -39,11 +39,9 @@ const OrderAdmin = () => {
         onKeyDown={(e) => e.stopPropagation()}
       >
         <InputComponent
-          // ref={searchInput}
           placeholder={`Search ${dataIndex}`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          // onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
           style={{
             marginBottom: 8,
             display: 'block',
@@ -52,7 +50,6 @@ const OrderAdmin = () => {
         <Space>
           <Button
             type="primary"
-            // onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
             style={{
@@ -62,7 +59,6 @@ const OrderAdmin = () => {
             Search
           </Button>
           <Button
-            // onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
             style={{
               width: 90,
@@ -84,23 +80,9 @@ const OrderAdmin = () => {
       record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
     onFilterDropdownOpenChange: (visible) => {
       if (visible) {
-        // setTimeout(() => searchInput.current?.select(), 100);
       }
     },
-    // render: (text) =>
-    //   searchedColumn === dataIndex ? (
-    //     // <Highlighter
-    //     //   highlightStyle={{
-    //     //     backgroundColor: '#ffc069',
-    //     //     padding: 0,
-    //     //   }}
-    //     //   searchWords={[searchText]}
-    //     //   autoEscape
-    //     //   textToHighlight={text ? text.toString() : ''}
-    //     // />
-    //   ) : (
-    //     text
-    //   ),
+  
   });
 
   const columns = [
@@ -146,6 +128,13 @@ const OrderAdmin = () => {
       sorter: (a, b) => a.totalPrice.length - b.totalPrice.length,
       ...getColumnSearchProps('totalPrice')
     },
+    {
+      title: 'Actions',
+      dataIndex: 'actions',
+      render: (text, record) => (
+        <Button type="primary" onClick={() => handleUpdateOrder(record)}>Hoàn thành</Button>
+      )
+    }
   ];
 
   const dataTable = orders?.data?.length && orders?.data?.map((order) => {
@@ -153,14 +142,50 @@ const OrderAdmin = () => {
     return { ...order, key: order._id, userName: order?.shippingAddress?.fullName, phone: order?.shippingAddress?.phone, address: order?.shippingAddress?.address, paymentMethod: orderContant.payment[order?.paymentMethod],isPaid: order?.isPaid ? 'TRUE' :'FALSE',isDelivered: order?.isDelivered ? 'TRUE' : 'FALSE', totalPrice: convertPrice(order?.totalPrice)}
   })
 
+  const calculateTotalPrice = () => {
+    if (!orders?.data?.length) return 0;
+    const totalPrice = orders.data.reduce((acc, order) => acc + order.totalPrice, 0);
+    return convertPrice(totalPrice);
+  }
+
+  const totalFormattedPrice = calculateTotalPrice();
+
+
+// Inside the OrderAdmin component
+const handleUpdateOrder = async (record) => {
+  try {
+    // Extract the order ID from the record
+    const orderId = record._id;
+    console.log(record._id)
+    
+    // Extract the user ID from the user object obtained via useSelector
+    
+    // Call the UpdateOrder service function passing the order ID, access token, and user ID
+    const updatedOrder = await UpdateOrder(orderId, user?.access_token);
+    
+    // Log the updated order
+    console.log('Updated order:', updatedOrder);
+    
+    // You can also handle UI updates or any other logic here
+  } catch (error) {
+    // Handle errors
+    console.error('Error updating order:', error);
+  }
+};
+
+
   return (
     <div>
       <WrapperHeader>Quản lý đơn hàng</WrapperHeader>
-      <div style={{height: 200, width:200}}>
-        <PieChartComponent data={orders?.data} />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ height: 200, width: 200, marginRight: 20 }}>
+          <div>Tỉ lệ các đơn hàng có giá trị trên 500.000đ</div>
+          <PieChartComponent data={orders?.data} />
+        </div>
+        <div>Tổng doanh thu: {totalFormattedPrice}</div>
       </div>
       <div style={{ marginTop: '20px' }}>
-        <TableComponent  columns={columns} isLoading={isLoadingOrders} data={dataTable} />
+        <TableComponent columns={columns} isLoading={isLoadingOrders} data={dataTable} />
       </div>
     </div>
   )

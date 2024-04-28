@@ -48,11 +48,9 @@ const AdminProduct = () => {
         rating,
         image,
         type,
-        token,
         countInStock,discount } = data
       const res = ProductService.createProduct({
         name,
-        token,
         price,
         description,
         rating,
