@@ -1,18 +1,37 @@
-const mongoose = require('mongoose')
-const userSchema = new mongoose.Schema(
-    {
-        name: { type: String },
-        email: { type: String, required: true, unique: true },
-        password: { type: String, required: true },
-        isAdmin: { type: Boolean, default: false, required: true },
-        phone: { type: Number },
-        address: { type: String },
-        avatar: { type: String },
-        city: {type: String}
+const mongoose = require('mongoose');
+
+// Define the schema for the booking table
+const bookingTableSchema = new mongoose.Schema({
+    numberTable: {
+        type: Number,
+        require: true,
+
     },
-    {
-        timestamps: true
+    name: {
+        type:  String,
+        required: true
+    },
+    UserID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+
+    },
+    maxCustomer: {
+        type: Number,
+        required: true
+    },
+    bookingTime: {
+        type: Date,
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-);
-const User = mongoose.model("table", userSchema);
-module.exports = User;
+});
+
+// Create a model based on the schema
+const BookingTable = mongoose.model('BookingTable', bookingTableSchema);
+
+module.exports = BookingTable;

@@ -48,12 +48,25 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
   const content = (
     <div>
       <WrapperContentPopup onClick={() => handleClickNavigate('profile')}>Thông tin người dùng</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate('booking')}>Đặt bàn</WrapperContentPopup>
+      <WrapperContentPopup onClick={() => handleClickNavigate('mybooking')}>Bàn đã đặt</WrapperContentPopup>
+
+
       {user?.isAdmin && (
 
         <WrapperContentPopup onClick={() => handleClickNavigate('admin')}>Quản lí hệ thống</WrapperContentPopup>
+        
+
       )}
+       {user?.isAdmin && (
+
+<WrapperContentPopup onClick={() => handleClickNavigate('adminbooking')}>Quản lí đặt bàn</WrapperContentPopup>
+
+
+)}
       <WrapperContentPopup onClick={() => handleClickNavigate(`my-order`)}>Đơn hàng của tôi</WrapperContentPopup>
       <WrapperContentPopup onClick={() => handleClickNavigate()}>Đăng xuất</WrapperContentPopup>
+
     </div>
   );
 
@@ -62,7 +75,14 @@ const HeaderComponent = ({ isHiddenSearch = false, isHiddenCart = false }) => {
       navigate('/profile-user')
     }else if(type === 'admin') {
       navigate('/system/admin')
-    }else if(type === 'my-order') {
+    }else if(type ==='mybooking') {
+      navigate('/my-booking')
+    }
+    else if(type ==='booking') {
+      navigate('/booking')
+    } else if(type ==='adminbooking') {
+      navigate('/admin-booking')
+    } else if(type === 'my-order') {
       navigate('/my-order',{ state : {
           id: user?.id,
           token : user?.access_token

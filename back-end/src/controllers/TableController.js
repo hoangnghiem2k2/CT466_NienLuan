@@ -1,112 +1,59 @@
-const TableService = require('../services/TableService')
+const bookingTableService = require('../services/TableService');
 
-const createTable = async (req, res) => {
+// Controller functions for CRUD operations
+exports.createBooking = async (req, res) => {
     try {
-        const { tableNumber, maxCustomer } = req.body;
-        const createdTable = await TableService.createTable({ tableNumber, maxCustomer });
-        res.status(201).json(createdTable);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error creating table' });
-      }
-}
-const updateTable = async (req, res) => {
+        const booking = await bookingTableService.createBooking(req.body);
+        res.status(201).json({ success: true, data: booking });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+};
+
+exports.getBookingById = async (req, res) => {
     try {
-        const tableId = req.params.id
-        const data = req.body
-        if (!tableId) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The Table is required'
-            })
+        const booking = await bookingTableService.getBookingById(req.params.id);
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
         }
-        const response = await TableService.updateTable(tableId, data)
-        return res.status(200).json(response)
-    } catch (e) {
-        return res.status(404).json({
-            message: e
-        })
+        res.status(200).json({ success: true, data: booking });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-}
+};
 
-
-
-const deleteTable = async (req, res) => {
+exports.getAll = async (req, res) => {
     try {
-        const tableId = req.params.id
-        const data = req.body
-        if (!tableId) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The Table is required'
-            })
+        const booking = await bookingTableService.getBooking();
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
         }
-        const response = await TableService.bookTable(tableId, data)
-        console.log(req.body.id)
-        return res.status(200).json(response)
-    } catch (e) {
-        return res.status(404).json({
-            message: e
-        })
+        res.status(200).json({ success: true, data: booking });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-}
+};
 
-
-
-const getAllTable = async (req, res) => {
+exports.updateBooking = async (req, res) => {
     try {
-        const response = await TableService.getAllTable()
-        return res.status(200).json(response)
-    } catch (e) {
-        return res.status(404).json({
-            message: e
-        })
-    }
-  }
-
-  const bookTable = async (req, res) => {
-    try {
-        const userId = req.params.id
-        const tableNumber = req.body.tableNumber
-        if (!tableNumber || !userId) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The User ID and TableNumber are required'
-            })
+        const booking = await bookingTableService.updateBooking(req.params.id, req.body);
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
         }
-        const response = await TableService.bookTable(tableNumber, userId)
-        return res.status(200).json(response)
-    } catch (e) {
-        return res.status(404).json({
-            message: e
-        })
+        res.status(200).json({ success: true, data: booking });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-  };
+};
 
-  const unBookTable = async (req, res) => {
+exports.deleteBooking = async (req, res) => {
     try {
-        const userId = req.params.id
-        const tableNumber = req.body.tableNumber
-        if (!tableNumber || !userId) {
-            return res.status(200).json({
-                status: 'ERR',
-                message: 'The User ID and TableNumber are required'
-            })
+        const booking = await bookingTableService.deleteBooking(req.params.id);
+        if (!booking) {
+            return res.status(404).json({ success: false, message: 'Booking not found' });
         }
-        const response = await TableService.unBookTable(tableNumber, userId)
-        return res.status(200).json(response)
-    } catch (e) {
-        return res.status(404).json({
-            message: e
-        })
+        res.status(200).json({ success: true, data: {} });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
-  };
-
-module.exports = {
-    createTable,
-    updateTable,
-    deleteTable,
-    getAllTable,
-    bookTable,
-    unBookTable
-}
+};

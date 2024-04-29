@@ -1,139 +1,86 @@
-const Table = require('../model/TableModel');
+const BookingTable = require('../model/TableModel');
 const User = require('../model/UserModel')
 
-const createTable = async (newTable) => {
-    try {
-        const existingTable = await Table.findOne({ tableNumber: newTable.tableNumber });
-        if (existingTable) {
-          return { status: 'ERR', message: 'Table already exists' };
-        }
-    
-        const createdTable = await Table.create(newTable);
-        return { status: 'OK', message: 'Table created successfully', data: createdTable };
-      } catch (error) {
-        console.error(error);
-        return { status: 'ERR', message: 'Error creating table' };
+
+exports.createBooking = async (bookingData) => {
+  try {
+      const { name, bookingTime, numberTable } = bookingData;
+      
+      const user = await User.findOne({ name });
+      if (!user) {
+          throw new Error('User not found');
       }
-}
 
-const updateTable = (id, data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const checkTable = await Table.findOne({
-                _id: id
-            })
-            if (checkTable === null) {
-                resolve({
-                    status: 'ERR',
-                    message: 'The Table is not defined'
-                })
-            }
+      const userID = user._id;
 
-            const updatedTable = await Table.findByIdAndUpdate(id, data, { new: true })
-            resolve({
-                status: 'OK',
-                message: 'SUCCESS',
-                data: updatedTable
-            })
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
+      const startTime = new Date(bookingTime);
+      const endTime = new Date(startTime);
+      endTime.setHours(endTime.getHours() + 1); 
+      endTime.setMinutes(endTime.getMinutes() + 30); 
 
-const deleteTable = (id) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const checkTable = await Table.findOne({
-                _id: id
-            })
-            if (checkTable === null) {
-                resolve({
-                    status: 'ERR',
-                    message: 'The Table is not defined'
-                })
-            }
+      const existingBookings = await BookingTable.find({
+          numberTable,
+          bookingTime: {
+              $gte: startTime, 
+              $lte: endTime    
+          }
+      });
 
-            await Table.findByIdAndDelete(id)
-            resolve({
-                status: 'OK',
-                message: 'Delete Dish success',
-            })
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-
-
-const getAllTable = () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const allTable = await Table.find()
-            resolve({
-                status: 'OK',
-                message: 'Success',
-                data: allTable
-            })
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-
-const bookTable = async (tableNumber, userId) => {
-    
-    try {
-      const table = await Table.findOneAndUpdate(
-        { tableNumber, isAvailable: true },  // Find available table matching number
-        { isAvailable: false, booking: userId },
-        { new: true } // Return the updated document
-      );
-  
-      if (!table) {
-        // No available table found, return specific error code and message
-        return { status: 'ERR_TABLE_NOT_AVAILABLE', message: 'The requested table is currently unavailable.' };
+      if (existingBookings.length > 0) {
+          throw new Error('There is already a booking for this table at the specified time.');
       }
-  
-      console.log(`Table ${table.tableNumber} booked successfully by user ${userId}`); // Log success message (optional)
-      return { status: 'OK', message: 'Table booked successfully.' };
-    } catch (error) {
-      console.error('Error booking table:', error.message);
-      // Re-throw or handle the error appropriately based on your application logic
-      throw error; // Re-throw for caller to handle
-    }
-  };
+
+      bookingData.UserID = userID;
+
+      return await BookingTable.create(bookingData);
+  } catch (error) {
+      throw new Error('Error creating booking: ' + error.message);
+  }
+};
 
 
-  const unBookTable= async (tableNumber, userId) => {  
-    try {
-      const table = await Table.findOneAndUpdate(
-        { tableNumber, isAvailable: false },  // Find available table matching number
-        { isAvailable: true, booking: null },
-        { new: true } // Return the updated document
-      );
-  
-      if (!table) {
-        // No available table found, return specific error code and message
-        return { status: 'ERR_TABLE_NOT_AVAILABLE', message: 'Something went wrong here' };
-      }
-  
-      console.log(`Table ${table.tableNumber} is now available, user ${userId} have checked out`); // Log success message (optional)
-      return { status: 'OK', message: 'Table unbooked successfully.' };
-    } catch (error) {
-      console.error('Error booking table:', error.message);
-      // Re-throw or handle the error appropriately based on your application logic
-      throw error; // Re-throw for caller to handle
-    }
-  };
+exports.getBookingById = async (userId) => {
+  try {
+    // Find all bookings where UserID matches the provided ID
+    const bookings = await BookingTable.find({ UserID: userId });
+
+    // Check if any bookings were found
+   
+
+    return bookings;
+  } catch (error) {
+    console.error('Error fetching bookings:', error.message);
+    throw new Error('An error occurred while fetching bookings.'); // Re-throw a more generic error for handling in the calling code
+  }
+}
+
+exports.getBooking = async () => {
+  try {
+    // Find all bookings where UserID matches the provided ID
+    const bookings = await BookingTable.find();
+
+    // Check if any bookings were found
+   
+
+    return bookings;
+  } catch (error) {
+    console.error('Error fetching bookings:', error.message);
+    throw new Error('An error occurred while fetching bookings.'); // Re-throw a more generic error for handling in the calling code
+  }
+}
 
 
+exports.deleteBooking = async (id) => {
+  try {
+    // Find all bookings where UserID matches the provided ID
+    const bookings = await BookingTable.findByIdAndDelete(id);
 
-module.exports = {
-    createTable,
-    updateTable,
-    deleteTable,
-    getAllTable,
-    bookTable,
-    unBookTable
+    // Check if any bookings were found
+   
+
+    return bookings;
+  } catch (error) {
+    console.error('Error fetching bookings:', error.message);
+    throw new Error('An error occurred while fetching bookings.'); // Re-throw a more generic error for handling in the calling code
+  }
 }

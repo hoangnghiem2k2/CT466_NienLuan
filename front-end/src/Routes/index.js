@@ -1,6 +1,9 @@
+import AdminBookingPage from "../pages/AdminBooking/AdminBooking";
 import AdminPage from "../pages/AdminPage/AdminPage";
+import BookingPage from "../pages/Booking/Booking";
 import DetailsOrderPage from "../pages/DetailsOrderPage/DetailsOrderPage";
 import HomePage from "../pages/HomePage/HomePage";
+import MyBookingPage from "../pages/MyBooking/MyBooking";
 import MyOrderPage from "../pages/MyOrder/MyOrder";
 import NotFoundPage from "../pages/NotFoundPage/NotFoundPage";
 import OrderPage from "../pages/OrderPage/OrderPage";
@@ -17,6 +20,21 @@ export const routes = [
     {
         path: '/',
         page: HomePage,
+        isShowHeader: true
+    },
+    {
+        path: '/booking',
+        page: BookingPage,
+        isShowHeader: true
+    },
+    {
+        path: '/my-booking',
+        page: MyBookingPage,
+        isShowHeader: true
+    },
+    {
+        path: '/admin-booking',
+        page: AdminBookingPage,
         isShowHeader: true
     },
     {
