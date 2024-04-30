@@ -133,7 +133,7 @@ const ProductDetailsComponent = ({idProduct}) => {
                     <WrapperStyleNameProduct>{productDetails?.name}</WrapperStyleNameProduct>
                     <div>
                         <Rate allowHalf defaultValue={productDetails?.rating} value={productDetails?.rating} />
-                        <WrapperStyleTextSell> | Da ban 1000+</WrapperStyleTextSell>
+                        <WrapperStyleTextSell> | {productDetails?.selled}</WrapperStyleTextSell>
                     </div>
                     <WrapperPriceProduct>
                         <WrapperPriceTextProduct>{convertPrice(productDetails?.price)}</WrapperPriceTextProduct>
@@ -178,18 +178,7 @@ const ProductDetailsComponent = ({idProduct}) => {
                             ></ButtonComponent>
                             {errorLimitOrder && <div style={{color: 'red'}}>San pham het hang</div>}
                         </div>
-                        <ButtonComponent
-                            size={40}
-                            styleButton={{
-                                background: '#fff',
-                                height: '48px',
-                                width: '220px',
-                                border: '1px solid rgb(13, 92, 182)',
-                                borderRadius: '4px'
-                            }}
-                            textbutton={'Mua trả sau'}
-                            styleTextButton={{ color: 'rgb(13, 92, 182)', fontSize: '15px' }}
-                        ></ButtonComponent>
+                       
                     </div>
                 </Col>
                 <CommentComponent 

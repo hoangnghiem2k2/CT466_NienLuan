@@ -79,8 +79,8 @@ const ProfilePage = () => {
 
     }
     return (
-        <div style={{ width: '1270px', margin: '0 auto', height: '500px' }}>
-            <WrapperHeader>Thông tin người dùng</WrapperHeader>
+        <div style={{ width: '1270px', margin: '0 auto', height: '500px' , textAlign: 'center'}}>
+            <WrapperHeader >Thông tin người dùng</WrapperHeader>
             <Loading isLoading={isLoading}>
                 <WrapperContentProfile>
                     <WrapperInput>
